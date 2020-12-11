@@ -1,4 +1,5 @@
 # Spelling Game
+require_relative("./player_character.rb")
 
 require "time"
 require "colorize"
@@ -32,8 +33,14 @@ def game_start
     system "clear"
     puts font_sml.write("Welcome to...")
     puts font_col.red(font_big.write("RPSG"))
-    $prompt.select("What would you like to do?",
+    return $prompt.select("What would you like to do?",
         ["Start New Game", "View Instructions", "Exit Game"])
+end
+
+def random_character
+    all_chars=["barbarian", "wizard", "thief"]
+    rand_char_num = rand(1..3)
+    new_player = PlayerCharacter.new("a_player", 3, all_chars[rand_char_num-1])
 end
 
 
@@ -213,4 +220,21 @@ def retry_game()
     end
 end
 
-game_start
+# game_start
+
+user_choice = ""
+while user_choice != "Exit Game"
+    user_choice = game_start
+    case user_choice
+    when "Start New Game"
+        puts random_character
+        break
+    when "View Instructions"
+        "sds"
+    else
+        puts "Come back again soon....if you DARE!!!"
+        next
+    end
+end
+
+puts random_character.traits
