@@ -1,5 +1,7 @@
 # Spelling Game
-require_relative("./player_character.rb")
+require_relative("./barbarian_class.rb")
+require_relative("./wizard_class.rb")
+require_relative("./thief_class.rb")
 
 require "time"
 require "colorize"
@@ -38,9 +40,16 @@ def game_start
 end
 
 def random_character
-    all_chars=["barbarian", "wizard", "thief"]
     rand_char_num = rand(1..3)
-    new_player = PlayerCharacter.new("a_player", 3, all_chars[rand_char_num-1])
+    case rand_char_num
+    when 1
+        new_player = WizardClass.new("Gandalf")
+    when 2
+        new_player = BarbarianClass.new("Conan")
+    when 3
+        new_player = ThiefClass.new("Arthur")
+    end
+    # new_player = PlayerCharacter.new("a_player", 3, all_chars[rand_char_num-1])
 end
 
 
@@ -237,4 +246,4 @@ while user_choice != "Exit Game"
     end
 end
 
-puts random_character.traits
+# puts random_character.traits
