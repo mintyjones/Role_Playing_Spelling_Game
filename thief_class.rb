@@ -15,12 +15,16 @@ class ThiefClass < PlayerCharacter
         @hp = self.determine_hp(@traits[:endurance])
         @passes = self.determine_passes(@traits[:intelligence])
         @changes = self.determine_changes(@traits[:dexterity])
-        puts "Traits within ThiefClass #{@traits}"
-        puts "Character HP #{@hp}"
-        puts "Character passes #{@passes}"
-        puts "Character changes #{@changes}"
+        # puts "Traits within ThiefClass #{@traits}"
+        # puts "Character HP #{@hp}"
+        # puts "Character passes #{@passes}"
+        # puts "Character changes #{@changes}"
     end
 
     def alternate_route
+    end
+    
+    def to_s
+        display_character
     end
 end

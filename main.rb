@@ -28,7 +28,7 @@ $hide_speed = 1.5
 $retry = false
 $prompt = TTY::Prompt.new
 
-def game_start
+def display_menu
     font_sml = TTY::Font.new(:straight)
     font_big = TTY::Font.new(:doom)
     font_col = Pastel.new
@@ -49,8 +49,27 @@ def random_character
     when 3
         new_player = ThiefClass.new("Arthur")
     end
-    # new_player = PlayerCharacter.new("a_player", 3, all_chars[rand_char_num-1])
+    puts new_player
+    puts "Are you happy with this character? (y/n)"
+    user_reply = gets.chomp
+    if user_reply == "y"
+        pre_game
+    else
+        puts "Press enter to reroll character..."
+        gets
+        random_character
+    end
+
 end
+
+def pre_game
+    puts
+    puts "Get ready for the Horde - Level 1...."
+    puts "Press enter when you're ready..."
+    gets
+    display_word
+end
+
 
 
 # def startup() 
@@ -87,20 +106,22 @@ end
 #     display_word
 # end
 
-def display_word()
-    puts fetch_current_word + "\r"
+def display_word
+    system "clear"
+    puts "Watch carefully and remember..."
+    puts " " + fetch_current_word + " \r"
     # time_limit
     # $stdout.flush
     sleep($hide_speed)
     system "clear"
-    puts "pleez type the word:"
+    puts "Type the word to destroy the minion:"
     player_attempt = gets.chomp
     match_check(player_attempt)
 end
 
 def fetch_current_word()
     $current_word = $current_lvl.fetch(rand($current_lvl.length-1))
-    $current_word.colorize(:color => :light_blue, :background => :red)
+    $current_word.colorize(:color => :black, :background => :green)
 end
 
 def time_limit()
@@ -233,10 +254,10 @@ end
 
 user_choice = ""
 while user_choice != "Exit Game"
-    user_choice = game_start
+    user_choice = display_menu
     case user_choice
     when "Start New Game"
-        puts random_character
+        random_character
         break
     when "View Instructions"
         "sds"

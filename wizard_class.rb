@@ -15,13 +15,17 @@ class WizardClass < PlayerCharacter
         @hp = self.determine_hp(@traits[:endurance])
         @passes = self.determine_passes(@traits[:intelligence])
         @changes = self.determine_changes(@traits[:dexterity])
-        puts "Traits within WizardClass #{@traits}"
-        puts "Character HP #{@hp}"
-        puts "Character passes #{@passes}"
-        puts "Character changes #{@changes}"
+        # puts "Traits within WizardClass #{@traits}"
+        # puts "Character HP #{@hp}"
+        # puts "Character passes #{@passes}"
+        # puts "Character changes #{@changes}"
     end
 
     def slow_time
+    end
+
+    def to_s
+        display_character
     end
 
 end

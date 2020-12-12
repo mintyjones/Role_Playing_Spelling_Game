@@ -7,9 +7,10 @@ class PlayerCharacter
         @traits[:endurance] = rand(5..20)
         @traits[:intelligence] = rand(5..20)
         @traits[:dexterity] = rand(5..20)
-        # @hp = determine_hp
-        puts "Initial traits: #{@traits}"
+        # puts "Initial traits: #{@traits}"
     end
+
+    # it would be nice to convert the 3 following methods into one called determiner which could accept a trait and an array of ranges as arguments
 
     def determine_hp(endurance)
         hp = 0
@@ -48,6 +49,11 @@ class PlayerCharacter
             changes = 3
         end
         changes   
+    end
+
+    def display_character
+        system "clear"
+        return "Here is your character: \nName: #{@name} \nClass: #{@character_class} \nEndurance: #{@traits[:endurance]} \nIntelligence: #{@traits[:intelligence]} \nDexterity: #{@traits[:dexterity]} \nHealth Points: #{@hp}"
     end
 
     def pass_word
