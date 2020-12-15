@@ -19,3 +19,5 @@ gem "tty-font", "~> 0.5.0"
 gem "tty-cursor", "~> 0.7.1"
 
 gem "tty-progressbar", "~> 0.2.0"
+
+gem "gosu", "~> 0.15.2"

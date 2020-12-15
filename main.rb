@@ -2,18 +2,22 @@
 require_relative("./barbarian_class.rb")
 require_relative("./wizard_class.rb")
 require_relative("./thief_class.rb")
+require_relative("./GetKey.rb")
 
 require "time"
 require "colorize"
 require "tty-prompt"
 require "tty-font"
+require "tty-progressbar"
+
+require 'timeout'
 
 # all level word arrays
-$lvl_1 = ["sapphic", "polysemous", "tricostate", "dissimilate", "fatherly", "perimeter", "decalogue", "moulage", "polygamy", "hipponous", "unsettledness", "selah", "galen", "tilt", "sheepshead", "venezuela", "nonbureaucratically", "mushier", "ruyter", "outdrove", "tablinum", "intestinally", "populous", "hardware", "lunacy", "estonian", "clementine", "unprotuberant", "bronchus"]
+$lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
 # $lvl_1 = ["perimeter"]
-$lvl_2 = ["semimatt", "incarnalising", "reno", "relanced", "preconsent", "cunnilinctus", "nonperpetration", "antierosive", "nonlimitative", "roster", "deuteron", "exurb", "surfbird", "jennet", "confessionalism", "ascribing", "branchiopodous", "aurelian", "unstinting", "intersentimental", "chemism", "moebius", "savourier", "panheaded", "unclipper", "minipill", "codling", "mesnalty", "calfless"]
+$lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
 # $lvl_2 = ["balanced", "uncertain"]
-$lvl_3 = ["hatchability", "riempie", "bruit", "unportended", "benzotrifluoride", "unsaltatorial", "interdetermination", "graze", "crystallographer", "harpins", "thunderclap", "macrocyte", "ennoblement", "demonetise", "unclustered", "piddler", "ceremonious", "lenore", "toweled", "finitude", "jemima", "nondegenerate", "levallois", "nomenclature", "davina", "eaves", "faintheartedly", "unweened", "reproachless"]
+$lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", "literature", "retirement", "commitment", "provincial", "profession", "acceptance", "settlement", "girlfriend", "excitement", "incredible", "reputation", "prediction", "difference", "dictionary", "repetition", "helicopter", "withdrawal", "projection", "accountant", "overcharge", "substitute", "psychology", "unpleasant", "deficiency", "conclusion", "perception", "correction", "acceptable", "philosophy", "gregarious", "relinquish", "houseplant", "confidence", "reasonable", "tournament", "depression", "presidency", "background", "hypothesis", "foundation", "redundancy", "experiment", "correspond", "restaurant", "enthusiasm"]
 # $lvl_3 = ["hatchability", "interdetermination", "thunderclap"]
 
 
@@ -23,6 +27,7 @@ player_attempt = ""
 $player_lives = 3
 $player_score = 0
 $level_counter = 0
+$word_count = 0
 $current_lvl = $lvl_1
 $hide_speed = 1.5
 $retry = false
@@ -111,11 +116,19 @@ def display_word
     puts "Watch carefully and remember..."
     puts " " + fetch_current_word + " \r"
     # time_limit
-    # $stdout.flush
     sleep($hide_speed)
     system "clear"
-    puts "Type the word to destroy the minion:"
-    player_attempt = gets.chomp
+    puts "You have 7 seconds to destroy the minion:"
+    x = 7
+    begin
+    player_attempt = Timeout::timeout(x) {
+        printf "Input: "
+        gets.chomp
+    }
+    # puts "Got: #{status}"
+    rescue Timeout::Error
+    puts "\nInput timed out after #{x} seconds"
+    end
     match_check(player_attempt)
 end
 
@@ -134,30 +147,33 @@ def time_limit()
     end
 end
 
-
+def run_special
+    loop do
+        k = GetKey.getkey
+        # puts "Key pressed: #{k.inspect}"
+            if k.inspect == "49"
+                puts "Number 1 button pressed"
+            end
+        sleep 1
+    end
+end
 
 def match_check(enteredWord)
     if enteredWord == $current_word
+        $word_count += 1
         # congratulate
         puts "Well done - that is correct"
         $player_score += 1
         puts "Your current score: #{$player_score}"
         sleep(3)
-        # delete word
-        $current_lvl.delete($current_word)
-        # check if any words left in the ar
-        if $current_lvl.length > 0
-            # if so  display the next word
-            system "clear"
-            next_word()
-        else
-            # display level up message
-            # puts "You are soooo gud - you're on to level #{$level_counter + 2}!"
-            # wait for user repsonse
-            # continue()
-            # increment the level
+        if ($current_lvl == $lvl_1 && $word_count > 9) || ($current_lvl == $lvl_2 && $word_count > 14) || ($current_lvl == $lvl_3 && $word_count > 19)
+            $word_count = 0
             system "clear"
             level_advance
+        else
+            # if so display the next word
+            system "clear"
+            next_word()
         end
     else
         # indicate wrong answer
@@ -166,18 +182,22 @@ def match_check(enteredWord)
         # decrease lives by one
         $player_lives -= 1
         # check if alive or dead
-        if $player_lives > 0
-            # allow retry  
-            puts "You have #{$player_lives} lives left!"
-            sleep(2.5)
-            system "clear"
-            puts "Try again"
-            try_again
-        else
-            puts "GAME OVER!!!!! :("
-            puts "Final score: #{$player_score}"
-            retry_game
-        end
+        game_over_check
+    end
+end
+
+def game_over_check
+    if $player_lives > 0
+        # allow retry  
+        puts "You have #{$player_lives} lives left!"
+        sleep(2.5)
+        system "clear"
+        puts "Try again"
+        try_again
+    else
+        puts "GAME OVER!!!!! :("
+        puts "Final score: #{$player_score}"
+        retry_game
     end
 end
 
@@ -188,12 +208,12 @@ end
 
 def try_again()
     puts "Here's the word again..."
-	puts $current_word.colorize(:color => :light_blue, :background => :red) + "\r"
-    $stdout.flush
+	puts $current_word.colorize(:color => :black, :background => :green) + "\r"
     sleep($hide_speed)
     system "clear"
-    puts "pleez type the word:"
+    puts "Type the word to destroy the minion:"
     player_attempt = gets.chomp
+    puts "This is the player's attempt: #{player_attempt}"
     match_check(player_attempt)
 end
 
@@ -214,12 +234,12 @@ def reset_vars()
     $retry = false
 end
 
-def next_word()
-    puts "Here's your next word..."
+def next_word
+    puts "Here's the next enemy..."
     display_word
 end
 
-def level_advance()
+def level_advance
     all_lvls = [$lvl_1, $lvl_2, $lvl_3]
     if $current_lvl != all_lvls.last
         puts "You are soooo gud - you're on to level #{$level_counter + 2}!"
@@ -244,7 +264,7 @@ def retry_game()
         reset_vars
 
         $retry = true
-        startup
+        display_menu
     else
         puts "Cya later..."
     end
