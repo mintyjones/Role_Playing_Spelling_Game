@@ -12,6 +12,7 @@ require "tty-progressbar"
 require "gosu"
 require "tty-spinner"
 require "yaml"
+require 'io/console'
 
 require 'timeout'
 
@@ -172,14 +173,7 @@ def match_check(enteredWord, time)
         $word_count += 1
         # congratulate
         puts "Well done - that is correct"
-        case time
-        when 0..2.5
-            $player_score += 3
-        when 2.6..4.5
-            $player_score += 2
-        when 4.6..7
-            $player_score += 1
-        end
+        update_score(time)
         puts "Your current score: #{$player_score}"
         sleep(3)
         next_level_check
@@ -191,6 +185,17 @@ def match_check(enteredWord, time)
         $player_lives -= 1
         # check if alive or dead
         game_over_check
+    end
+end
+
+def update_score(time)
+    case time
+    when 0..2.5
+        $player_score += 3
+    when 2.6..4.5
+        $player_score += 2
+    when 4.6..7
+        $player_score += 1
     end
 end
 
@@ -331,19 +336,21 @@ def retry_game()
 end
 
 # game_start
-
-user_choice = ""
-while user_choice != "Exit Game"
-    user_choice = display_menu
-    case user_choice
-    when "Start New Game"
-        random_character
-        break
-    when "View Instructions"
-        puts "sds"
-    else
-        puts "Come back again soon....if you DARE!!!"
-        next
+loop do
+    p STDIN.getch
+    user_choice = ""
+    while user_choice != "Exit Game"
+        user_choice = display_menu
+        case user_choice
+        when "Start New Game"
+            random_character
+            break
+        when "View Instructions"
+            puts "sds"
+        else
+            puts "Come back again soon....if you DARE!!!"
+            next
+        end
     end
 end
 
