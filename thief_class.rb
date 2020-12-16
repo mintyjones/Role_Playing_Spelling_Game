@@ -1,7 +1,7 @@
 require_relative("./player_character.rb")
 
 class ThiefClass < PlayerCharacter
-    attr_reader :name
+    attr_reader :name, :hp
     attr_accessor :passes
     def initialize(name)
         super(name, "thief")
@@ -23,7 +23,8 @@ class ThiefClass < PlayerCharacter
         # puts "Character changes #{@changes}"
     end
 
-    def alternate_route
+    def power
+        puts "Using the character power"
     end
     
     def to_s

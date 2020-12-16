@@ -52,8 +52,7 @@ class PlayerCharacter
     end
 
     def display_character
-        system "clear"
-        return "Here is your character: \nName: #{@name} \nClass: #{@character_class} \nEndurance: #{@traits[:endurance]} \nIntelligence: #{@traits[:intelligence]} \nDexterity: #{@traits[:dexterity]} \nHealth Points: #{@hp}"
+        return "Here is your character: \nName: #{@name} \nClass: #{@character_class} \nEndurance: #{@traits[:endurance]} \nIntelligence: #{@traits[:intelligence]} \nDexterity: #{@traits[:dexterity]} \nNumber of Passes: #{@passes} \nHealth Points: #{@hp}"
     end
 
     def pass_word

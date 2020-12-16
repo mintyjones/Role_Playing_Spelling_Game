@@ -1,7 +1,7 @@
 require_relative("./player_character.rb")
 
 class BarbarianClass < PlayerCharacter
-    attr_reader :name
+    attr_reader :name, :hp
     attr_accessor :passes
     def initialize(name)
         super(name, "barbarian")
@@ -24,7 +24,17 @@ class BarbarianClass < PlayerCharacter
         # puts "Character changes #{@changes}"
     end
 
-    def big_strike
+    def power
+        puts "Using the character power"
+        case $current_lvl
+        when $lvl_1
+            $word_count += 5
+        when $lvl_2
+            $word_count += 7
+        when $lvl_3
+            $word_count += 10
+        end
+        $player_lives -= 2
     end
     
     def to_s

@@ -1,7 +1,7 @@
     require_relative("./player_character.rb")
 
     class WizardClass < PlayerCharacter
-        attr_reader :name
+        attr_reader :name, :hp
         attr_accessor :passes
         def initialize(name)
             super(name, "wizard")
@@ -23,7 +23,8 @@
             # puts "Character changes #{@changes}"
         end
 
-        def slow_time
+        def power
+            puts "Using the character power"
         end
 
         def to_s

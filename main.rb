@@ -29,12 +29,13 @@ $lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", 
 
 $current_word = ""
 player_attempt = ""
-$player_lives = 3
+$player_lives = 0
 $player_score = 0
 $level_counter = 0
 $word_count = 0
 $current_lvl = $lvl_1
 $hide_speed = 1.5
+$time_limit = 7
 $retry = false
 $prompt = TTY::Prompt.new
 $player = nil
@@ -74,13 +75,14 @@ end
 
 def character_check(character)
     system "clear"
-    puts "Here is you character:"
+    puts "Here is your character:"
     puts character
     puts "Are you happy with this character? (y/n)"
     user_reply = gets.chomp
     if user_reply == "y"
         $player = character
-        pre_game
+        $player_lives = $player.hp
+        pick_difficulty
     else
         puts "Press enter to reroll character..."
         gets
@@ -109,7 +111,22 @@ def pre_game
     display_word
 end
 
-
+def pick_difficulty
+    print "Pick a difficulty level (easy/med/hard): "
+    diff_choice = gets.chomp
+    case diff_choice
+        when "easy"
+            $hide_speed = 3  
+            $time_limit = 7
+        when "med"
+            $hide_speed = 2
+            $time_limit = 6
+        when "hard"
+            $hide_speed = 1.5
+            $time_limit = 5
+    end 
+    pre_game
+end
 
 # def startup() 
 #     system "clear"
@@ -152,13 +169,11 @@ def display_word
     # time_limit
     sleep($hide_speed)
     system "clear"
-    puts "You have 7 seconds to destroy the minion:"
-    
-    x = 7
+    puts "You have #{$time_limit} seconds to destroy the minion:"
     begin
     #run_special
     start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    player_attempt = Timeout::timeout(x) {
+    player_attempt = Timeout::timeout($time_limit) {
         printf "Input: "
         gets.chomp
     }
@@ -166,7 +181,7 @@ def display_word
     time_passed = end_time - start_time
     # puts "Got: #{status}"
     rescue Timeout::Error
-    puts "\nInput timed out after #{x} seconds"
+    puts "\nInput timed out after #{$time_limit} seconds"
     end
     match_check(player_attempt, time_passed)
 end
@@ -186,22 +201,24 @@ end
 #     end
 # end
 
-def run_special
-    loop do
-        k = GetKey.getkey
-        # puts "Key pressed: #{k.inspect}"
-            if k.inspect == "49"
-                puts "Number 1 button pressed"
-            end
-        sleep 1
-    end
-end
+# def run_special
+#     loop do
+#         k = GetKey.getkey
+#         # puts "Key pressed: #{k.inspect}"
+#             if k.inspect == "49"
+#                 puts "Number 1 button pressed"
+#             end
+#         sleep 1
+#     end
+# end
 
 def match_check(enteredWord, time)
     if enteredWord == $current_word
         $word_count += 1
         # congratulate
         puts "Well done - that is correct"
+        # delete word
+        $current_lvl.delete($current_word)
         update_score(time)
         puts "Your current score: #{$player_score}"
         sleep(3)
@@ -220,6 +237,9 @@ def match_check(enteredWord, time)
             # check if alive or dead
             game_over_check
         end
+    elsif enteredWord == "1"
+        $player.power
+        game_over_check
     else
         # indicate wrong answer
         system "clear"
@@ -231,6 +251,7 @@ def match_check(enteredWord, time)
     end
 end
 
+# need to look if I can make these ranges more dynamic regarding diff level
 def update_score(time)
     case time
     when 0..2.5
@@ -281,22 +302,22 @@ def game_over_check
     end
 end
 
-def continue()
+def continue
     print "Press enter wen yoo reddy"
     gets
 end
 
-def try_again()
+def try_again
     puts "Here's the word again..."
 	puts $current_word.colorize(:color => :black, :background => :green) + "\r"
     sleep($hide_speed)
     system "clear"
-    puts "You have 7 seconds to destroy the minion:"
+    puts "You have #{$time_limit} seconds to destroy the minion:"
     
-    x = 7
+    x = $time_limit
     begin
     start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    player_attempt = Timeout::timeout(x) {
+    player_attempt = Timeout::timeout($time_limit) {
         printf "Input: "
         gets.chomp
     }
@@ -333,13 +354,14 @@ def reset_vars()
     # $lvl_3 = ["hatchability", "interdetermination", "thunderclap"]
     $current_word = ""
     player_attempt = ""
-    $player_lives = 3
+    $player_lives = 0
     $level_counter = 0
     $player_score = 0
     $current_lvl = $lvl_1
     $hide_speed = 1.5
     $retry = false
     $player = nil
+    user_choice = ""
 end
 
 def next_word
@@ -351,10 +373,16 @@ def level_advance
     all_lvls = [$lvl_1, $lvl_2, $lvl_3]
     if $current_lvl != all_lvls.last
         puts "You are soooo gud - you're on to level #{$level_counter + 2}!"
+        puts "Here's a reminder of your character's stats"
+        # the hp is not correct here.
+        puts $player
         $level_counter += 1
         $current_lvl = all_lvls[$level_counter]
         if $hide_speed >= 0.4
             $hide_speed -= 0.2
+        end
+        if $time_limit >= 2
+            $time_limit -= 2
         end
         continue()
         system "clear"
@@ -393,8 +421,8 @@ while user_choice != "Exit Game"
         puts HighScores.new
         puts "Press Enter to return to main menu."
         gets
-        user_choice = display_menu
-        break
+        display_menu
+        next
     else
         puts "Come back again soon....if you DARE!!!"
         next
