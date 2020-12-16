@@ -204,7 +204,21 @@ def match_check(enteredWord, time)
         update_score(time)
         puts "Your current score: #{$player_score}"
         sleep(3)
-        next_level_check
+        next_level_check    
+    elsif enteredWord == ""
+        if $player.passes > 0
+            $word_count += 1
+            puts "You have used a pass power!!"
+            $player.passes -= 1
+            puts "You have #{$player.passes} left!"
+            sleep(2)
+            next_level_check 
+        else
+            puts "You have no passes left!"
+            $player_lives -= 1
+            # check if alive or dead
+            game_over_check
+        end
     else
         # indicate wrong answer
         system "clear"
