@@ -2,6 +2,7 @@ require_relative("./player_character.rb")
 
 class BarbarianClass < PlayerCharacter
     attr_reader :name
+    attr_accessor :passes
     def initialize(name)
         super(name, "barbarian")
         @traits[:intelligence] = traits[:intelligence] - 3

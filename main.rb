@@ -125,18 +125,20 @@ def display_word
     puts "You have 7 seconds to destroy the minion:"
     
     x = 7
-    # spinner = TTY::Spinner.new("[:spinner] Task name")
-    # spinner.auto_spin
     begin
+    #run_special
+    start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     player_attempt = Timeout::timeout(x) {
         printf "Input: "
         gets.chomp
     }
+    end_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    time_passed = end_time - start_time
     # puts "Got: #{status}"
     rescue Timeout::Error
     puts "\nInput timed out after #{x} seconds"
     end
-    match_check(player_attempt)
+    match_check(player_attempt, time_passed)
 end
 
 def fetch_current_word()
@@ -165,23 +167,22 @@ def run_special
     end
 end
 
-def match_check(enteredWord)
+def match_check(enteredWord, time)
     if enteredWord == $current_word
         $word_count += 1
         # congratulate
         puts "Well done - that is correct"
-        $player_score += 1
+        case time
+        when 0..2.5
+            $player_score += 3
+        when 2.6..4.5
+            $player_score += 2
+        when 4.6..7
+            $player_score += 1
+        end
         puts "Your current score: #{$player_score}"
         sleep(3)
-        if ($current_lvl == $lvl_1 && $word_count > 9) || ($current_lvl == $lvl_2 && $word_count > 14) || ($current_lvl == $lvl_3 && $word_count > 19)
-            $word_count = 0
-            system "clear"
-            level_advance
-        else
-            # if so display the next word
-            system "clear"
-            next_word()
-        end
+        next_level_check
     else
         # indicate wrong answer
         system "clear"
@@ -192,6 +193,25 @@ def match_check(enteredWord)
         game_over_check
     end
 end
+
+def pass_word
+    $player
+    system "clear"
+    puts "You passed the word"
+end
+
+def next_level_check
+    if ($current_lvl == $lvl_1 && $word_count > 9) || ($current_lvl == $lvl_2 && $word_count > 14) || ($current_lvl == $lvl_3 && $word_count > 19)
+        $word_count = 0
+        system "clear"
+        level_advance
+    else
+        # if so display the next word
+        system "clear"
+        next_word()
+    end
+end
+
 
 def game_over_check
     if $player_lives > 0
@@ -223,10 +243,22 @@ def try_again()
 	puts $current_word.colorize(:color => :black, :background => :green) + "\r"
     sleep($hide_speed)
     system "clear"
-    puts "Type the word to destroy the minion:"
-    player_attempt = gets.chomp
-    puts "This is the player's attempt: #{player_attempt}"
-    match_check(player_attempt)
+    puts "You have 7 seconds to destroy the minion:"
+    
+    x = 7
+    begin
+    start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    player_attempt = Timeout::timeout(x) {
+        printf "Input: "
+        gets.chomp
+    }
+    end_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    time_passed = end_time - start_time
+    # puts "Got: #{status}"
+    rescue Timeout::Error
+    puts "\nInput timed out after #{x} seconds"
+    end
+    match_check(player_attempt, time_passed)
 end
 
 def write_to_file(high_score)
@@ -308,7 +340,7 @@ while user_choice != "Exit Game"
         random_character
         break
     when "View Instructions"
-        "sds"
+        puts "sds"
     else
         puts "Come back again soon....if you DARE!!!"
         next

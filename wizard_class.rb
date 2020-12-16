@@ -2,6 +2,7 @@
 
     class WizardClass < PlayerCharacter
         attr_reader :name
+        attr_accessor :passes
         def initialize(name)
             super(name, "wizard")
             @traits[:intelligence] = self.traits[:intelligence] + 4
