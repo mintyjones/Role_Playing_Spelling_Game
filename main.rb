@@ -49,6 +49,44 @@ def display_menu
         ["Start New Game", "View Instructions", "Exit Game"])
 end
 
+def make_character
+    puts "Create a new character!"
+    user_character = $prompt.select("What character class would you like to choose?", ["Barbarian", "Wizard", "Thief", "Random"])
+    case user_character
+    when "Barbarian"
+        puts "Enter character name: "
+        char_name = gets.chomp
+        new_player = BarbarianClass.new(char_name)
+    when "Wizard"
+        puts "Enter character name: "
+        char_name = gets.chomp
+        new_player = WizardClass.new(char_name)
+    when "Thief"
+        puts "Enter character name: "
+        char_name = gets.chomp
+        new_player = ThiefClass.new(char_name)
+    else
+        random_character
+    end
+    character_check(new_player)
+end
+
+def character_check(character)
+    system "clear"
+    puts "Here is you character:"
+    puts character
+    puts "Are you happy with this character? (y/n)"
+    user_reply = gets.chomp
+    if user_reply == "y"
+        $player = character
+        pre_game
+    else
+        puts "Press enter to reroll character..."
+        gets
+        make_character
+    end
+end
+
 def random_character
     rand_char_num = rand(1..3)
     case rand_char_num
@@ -59,17 +97,7 @@ def random_character
     when 3
         new_player = ThiefClass.new("Arthur")
     end
-    puts new_player
-    puts "Are you happy with this character? (y/n)"
-    user_reply = gets.chomp
-    if user_reply == "y"
-        $player = new_player
-        pre_game
-    else
-        puts "Press enter to reroll character..."
-        gets
-        random_character
-    end
+    character_check(new_player)
 end
 
 def pre_game
@@ -199,11 +227,11 @@ def update_score(time)
     end
 end
 
-def pass_word
-    $player
-    system "clear"
-    puts "You passed the word"
-end
+# def pass_word
+#     $player
+#     system "clear"
+#     puts "You passed the word"
+# end
 
 def next_level_check
     if ($current_lvl == $lvl_1 && $word_count > 9) || ($current_lvl == $lvl_2 && $word_count > 14) || ($current_lvl == $lvl_3 && $word_count > 19)
@@ -229,7 +257,7 @@ def game_over_check
     else
         puts "GAME OVER!!!!! :("
         puts "Final score: #{$player_score}"
-        puts $player.class
+        # puts $player.class
         high_score = Hash.new{0}
         high_score[:playername] = $player.name
         high_score[:playerscore] = $player_score
@@ -273,7 +301,7 @@ def write_to_file(high_score)
         # This is a behaviour that mimicks storing data to a DB - for now its just a file that we are dealing with
         file = File.open("highscores.yml","a+"){ |file| file.write(high_score.to_yaml)}
         if file
-            puts "High score saved successfully to file"
+            # puts "High score saved successfully to file"
         end
     rescue
         puts "File not found"
@@ -336,21 +364,19 @@ def retry_game()
 end
 
 # game_start
-loop do
-    p STDIN.getch
-    user_choice = ""
-    while user_choice != "Exit Game"
-        user_choice = display_menu
-        case user_choice
-        when "Start New Game"
-            random_character
-            break
-        when "View Instructions"
-            puts "sds"
-        else
-            puts "Come back again soon....if you DARE!!!"
-            next
-        end
+
+user_choice = ""
+while user_choice != "Exit Game"
+    user_choice = display_menu
+    case user_choice
+    when "Start New Game"
+        make_character
+        break
+    when "View Instructions"
+        puts "sds"
+    else
+        puts "Come back again soon....if you DARE!!!"
+        next
     end
 end
 
