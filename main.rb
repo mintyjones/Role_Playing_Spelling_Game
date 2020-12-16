@@ -2,13 +2,14 @@
 require_relative("./barbarian_class.rb")
 require_relative("./wizard_class.rb")
 require_relative("./thief_class.rb")
+require_relative("./high_scores.rb")
 require_relative("./GetKey.rb")
-
+require "tty-table"
 require "time"
 require "colorize"
 require "tty-prompt"
 require "tty-font"
-require "tty-progressbar"
+# require "tty-progressbar"
 require "gosu"
 require "tty-spinner"
 require "yaml"
@@ -46,7 +47,7 @@ def display_menu
     puts font_sml.write("Welcome to...")
     puts font_col.red(font_big.write("RPSG"))
     return $prompt.select("What would you like to do?",
-        ["Start New Game", "View Instructions", "Exit Game"])
+        ["Start New Game", "View Instructions", "View Leaderboard", "Exit Game"])
 end
 
 def make_character
@@ -388,6 +389,12 @@ while user_choice != "Exit Game"
         break
     when "View Instructions"
         puts "sds"
+    when "View Leaderboard"
+        puts HighScores.new
+        puts "Press Enter to return to main menu."
+        gets
+        user_choice = display_menu
+        break
     else
         puts "Come back again soon....if you DARE!!!"
         next
