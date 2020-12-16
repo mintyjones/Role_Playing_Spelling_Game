@@ -9,6 +9,9 @@ require "colorize"
 require "tty-prompt"
 require "tty-font"
 require "tty-progressbar"
+require "gosu"
+require "tty-spinner"
+require "yaml"
 
 require 'timeout'
 
@@ -32,6 +35,7 @@ $current_lvl = $lvl_1
 $hide_speed = 1.5
 $retry = false
 $prompt = TTY::Prompt.new
+$player = nil
 
 def display_menu
     font_sml = TTY::Font.new(:straight)
@@ -58,17 +62,17 @@ def random_character
     puts "Are you happy with this character? (y/n)"
     user_reply = gets.chomp
     if user_reply == "y"
+        $player = new_player
         pre_game
     else
         puts "Press enter to reroll character..."
         gets
         random_character
     end
-
 end
 
 def pre_game
-    puts
+    puts 
     puts "Get ready for the Horde - Level 1...."
     puts "Press enter when you're ready..."
     gets
@@ -119,7 +123,10 @@ def display_word
     sleep($hide_speed)
     system "clear"
     puts "You have 7 seconds to destroy the minion:"
+    
     x = 7
+    # spinner = TTY::Spinner.new("[:spinner] Task name")
+    # spinner.auto_spin
     begin
     player_attempt = Timeout::timeout(x) {
         printf "Input: "
@@ -137,15 +144,15 @@ def fetch_current_word()
     $current_word.colorize(:color => :black, :background => :green)
 end
 
-def time_limit()
-    second_limit = 5
-    start_time = Time.now.to_i
-    current_time = Time.now.to_i
-    while current_time < start_time + second_limit
-        puts "Timer #{current_time}"
-        current_time = Time.now.to_i
-    end
-end
+# def time_limit()
+#     second_limit = 5
+#     start_time = Time.now.to_i
+#     current_time = Time.now.to_i
+#     while current_time < start_time + second_limit
+#         puts "Timer #{current_time}"
+#         current_time = Time.now.to_i
+#     end
+# end
 
 def run_special
     loop do
@@ -197,6 +204,11 @@ def game_over_check
     else
         puts "GAME OVER!!!!! :("
         puts "Final score: #{$player_score}"
+        puts $player.class
+        high_score = Hash.new{0}
+        high_score[:playername] = $player.name
+        high_score[:playerscore] = $player_score
+        write_to_file(high_score)
         retry_game
     end
 end
@@ -217,12 +229,27 @@ def try_again()
     match_check(player_attempt)
 end
 
+def write_to_file(high_score)
+    # Here is a scenario where we try to search for a file to open it and write to it
+    #  this begin rescue block ensures that if there is an error while during the file open / write operation in the BEGIN block, it is handled in the rescue block
+    begin
+        # This is a behaviour that mimicks storing data to a DB - for now its just a file that we are dealing with
+        file = File.open("highscores.yml","a+"){ |file| file.write(high_score.to_yaml)}
+        if file
+            puts "High score saved successfully to file"
+        end
+    rescue
+        puts "File not found"
+        puts "Could not save high score to the file"
+    end
+end
+
 def reset_vars()
-    $lvl_1 = ["sapphic", "polysemous", "tricostate", "dissimilate", "fatherly", "perimeter", "decalogue", "moulage", "polygamy", "hipponous", "unsettledness", "selah", "galen", "tilt", "sheepshead", "venezuela", "nonbureaucratically", "mushier", "ruyter", "outdrove", "tablinum", "intestinally", "populous", "hardware", "lunacy", "estonian", "clementine", "unprotuberant", "bronchus"]
+    $lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
     # $lvl_1 = ["perimeter"]
-    $lvl_2 = ["semimatt", "incarnalising", "reno", "relanced", "preconsent", "cunnilinctus", "nonperpetration", "antierosive", "nonlimitative", "roster", "deuteron", "exurb", "surfbird", "jennet", "confessionalism", "ascribing", "branchiopodous", "aurelian", "unstinting", "intersentimental", "chemism", "moebius", "savourier", "panheaded", "unclipper", "minipill", "codling", "mesnalty", "calfless"]
+    $lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
     # $lvl_2 = ["balanced", "uncertain"]
-    $lvl_3 = ["hatchability", "riempie", "bruit", "unportended", "benzotrifluoride", "unsaltatorial", "interdetermination", "graze", "crystallographer", "harpins", "thunderclap", "macrocyte", "ennoblement", "demonetise", "unclustered", "piddler", "ceremonious", "lenore", "toweled", "finitude", "jemima", "nondegenerate", "levallois", "nomenclature", "davina", "eaves", "faintheartedly", "unweened", "reproachless"]
+    $lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", "literature", "retirement", "commitment", "provincial", "profession", "acceptance", "settlement", "girlfriend", "excitement", "incredible", "reputation", "prediction", "difference", "dictionary", "repetition", "helicopter", "withdrawal", "projection", "accountant", "overcharge", "substitute", "psychology", "unpleasant", "deficiency", "conclusion", "perception", "correction", "acceptable", "philosophy", "gregarious", "relinquish", "houseplant", "confidence", "reasonable", "tournament", "depression", "presidency", "background", "hypothesis", "foundation", "redundancy", "experiment", "correspond", "restaurant", "enthusiasm"]
     # $lvl_3 = ["hatchability", "interdetermination", "thunderclap"]
     $current_word = ""
     player_attempt = ""
@@ -232,6 +259,7 @@ def reset_vars()
     $current_lvl = $lvl_1
     $hide_speed = 1.5
     $retry = false
+    $player = nil
 end
 
 def next_word

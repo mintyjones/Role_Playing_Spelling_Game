@@ -1,4 +1,5 @@
 require_relative("./GetKey.rb")
+require("tty-spinner")
 
 # user_input = Thread.new do
 #     print "Enter something: "
@@ -90,11 +91,30 @@ require_relative("./GetKey.rb")
   
 #   puts "Oh, I quit."
 
-loop do
-    k = GetKey.getkey
-    # puts "Key pressed: #{k.inspect}"
-        if k.inspect == "49"
-            puts "Number 1 button pressed"
-        end
-    sleep 1
-end
+# loop do
+#     k = GetKey.getkey
+#     # puts "Key pressed: #{k.inspect}"
+#         if k.inspect == "49"
+#             puts "Number 1 button pressed"
+#         end
+#     sleep 1
+# end
+
+
+spinner = TTY::Spinner.new("[:spinner] Task name")
+
+spinner.auto_spin
+
+sleep(2)
+
+spinner.pause
+
+sleep(2)
+
+spinner.resume
+
+sleep(2)
+
+spinner.stop
+
+puts
