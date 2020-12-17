@@ -1,8 +1,8 @@
 require_relative("./player_character.rb")
 
 class BarbarianClass < PlayerCharacter
-    attr_reader :name, :hp
-    attr_accessor :passes
+    attr_reader :name
+    attr_accessor :passes, :hp
     def initialize(name)
         super(name, "barbarian")
         @traits[:intelligence] = traits[:intelligence] - 3
@@ -34,7 +34,7 @@ class BarbarianClass < PlayerCharacter
         when $lvl_3
             $word_count += 10
         end
-        $player_lives -= 2
+        @hp -= 2
     end
     
     def to_s

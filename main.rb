@@ -10,26 +10,24 @@ require "colorize"
 require "tty-prompt"
 require "tty-font"
 # require "tty-progressbar"
-require "gosu"
-require "tty-spinner"
+# require "gosu"
+# require "tty-spinner"
 require "yaml"
-require 'io/console'
+# require 'io/console'
 
 require 'timeout'
 
 # all level word arrays
 $lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
-# $lvl_1 = ["perimeter"]
+
 $lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
-# $lvl_2 = ["balanced", "uncertain"]
+
 $lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", "literature", "retirement", "commitment", "provincial", "profession", "acceptance", "settlement", "girlfriend", "excitement", "incredible", "reputation", "prediction", "difference", "dictionary", "repetition", "helicopter", "withdrawal", "projection", "accountant", "overcharge", "substitute", "psychology", "unpleasant", "deficiency", "conclusion", "perception", "correction", "acceptable", "philosophy", "gregarious", "relinquish", "houseplant", "confidence", "reasonable", "tournament", "depression", "presidency", "background", "hypothesis", "foundation", "redundancy", "experiment", "correspond", "restaurant", "enthusiasm"]
-# $lvl_3 = ["hatchability", "interdetermination", "thunderclap"]
 
 
 
 $current_word = ""
 player_attempt = ""
-$player_lives = 0
 $player_score = 0
 $level_counter = 0
 $word_count = 0
@@ -37,6 +35,7 @@ $current_lvl = $lvl_1
 $hide_speed = 1.5
 $time_limit = 7
 $retry = false
+# SHOULD I USE THIS AS A GLOBAL VARIABLE?
 $prompt = TTY::Prompt.new
 $player = nil
 
@@ -75,13 +74,11 @@ end
 
 def character_check(character)
     system "clear"
-    puts "Here is your character:"
     puts character
     puts "Are you happy with this character? (y/n)"
     user_reply = gets.chomp
     if user_reply == "y"
         $player = character
-        $player_lives = $player.hp
         pick_difficulty
     else
         puts "Press enter to reroll character..."
@@ -128,40 +125,6 @@ def pick_difficulty
     pre_game
 end
 
-# def startup() 
-#     system "clear"
-#     if $retry == false
-#         # returns the player's first attempt at the first word
-#         puts "Think your gud at speling?"
-#         sleep(2)
-#         puts "I'll displae a wurd, and then tayk it away...you have to then remember and type it."
-#         sleep(3)
-#         puts ""
-#         puts "If yoo get it right, I'll displae anuther werd and yoo doo the same."
-#         sleep(2.5)
-#         puts "If you get it rong, youll looz a life and have too try again."
-#         puts ""
-#         sleep(2)
-#     else
-#         puts "You know the rules...!"
-#     end
-    
-#     print "Pick a difficulty level (easy/med/hard): "
-#     diff_choice = gets.chomp
-#     case diff_choice
-#         when "easy"
-#             $hide_speed = 3  
-#         when "med"
-#             $hide_speed = 2
-#         when "hard"
-#             $hide_speed = 1.5
-#     end 
-#     continue
-#     system "clear"
-#     puts "Here's the first word"
-#     display_word
-# end
-
 def display_word
     system "clear"
     puts "Watch carefully and remember..."
@@ -191,27 +154,6 @@ def fetch_current_word()
     $current_word.colorize(:color => :black, :background => :green)
 end
 
-# def time_limit()
-#     second_limit = 5
-#     start_time = Time.now.to_i
-#     current_time = Time.now.to_i
-#     while current_time < start_time + second_limit
-#         puts "Timer #{current_time}"
-#         current_time = Time.now.to_i
-#     end
-# end
-
-# def run_special
-#     loop do
-#         k = GetKey.getkey
-#         # puts "Key pressed: #{k.inspect}"
-#             if k.inspect == "49"
-#                 puts "Number 1 button pressed"
-#             end
-#         sleep 1
-#     end
-# end
-
 def match_check(enteredWord, time)
     if enteredWord == $current_word
         $word_count += 1
@@ -233,7 +175,7 @@ def match_check(enteredWord, time)
             next_level_check 
         else
             puts "You have no passes left!"
-            $player_lives -= 1
+            $player.hp -= 1
             # check if alive or dead
             game_over_check
         end
@@ -245,7 +187,7 @@ def match_check(enteredWord, time)
         system "clear"
         puts "Bah bah - wrong."
         # decrease lives by one
-        $player_lives -= 1
+        $player.hp -= 1
         # check if alive or dead
         game_over_check
     end
@@ -263,12 +205,6 @@ def update_score(time)
     end
 end
 
-# def pass_word
-#     $player
-#     system "clear"
-#     puts "You passed the word"
-# end
-
 def next_level_check
     if ($current_lvl == $lvl_1 && $word_count > 9) || ($current_lvl == $lvl_2 && $word_count > 14) || ($current_lvl == $lvl_3 && $word_count > 19)
         $word_count = 0
@@ -283,9 +219,9 @@ end
 
 
 def game_over_check
-    if $player_lives > 0
+    if $player.hp > 0
         # allow retry  
-        puts "You have #{$player_lives} lives left!"
+        puts "You have #{$player.hp} lives left!"
         sleep(2.5)
         system "clear"
         puts "Try again"
@@ -345,25 +281,6 @@ def write_to_file(high_score)
     end
 end
 
-def reset_vars()
-    $lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
-    # $lvl_1 = ["perimeter"]
-    $lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
-    # $lvl_2 = ["balanced", "uncertain"]
-    $lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", "literature", "retirement", "commitment", "provincial", "profession", "acceptance", "settlement", "girlfriend", "excitement", "incredible", "reputation", "prediction", "difference", "dictionary", "repetition", "helicopter", "withdrawal", "projection", "accountant", "overcharge", "substitute", "psychology", "unpleasant", "deficiency", "conclusion", "perception", "correction", "acceptable", "philosophy", "gregarious", "relinquish", "houseplant", "confidence", "reasonable", "tournament", "depression", "presidency", "background", "hypothesis", "foundation", "redundancy", "experiment", "correspond", "restaurant", "enthusiasm"]
-    # $lvl_3 = ["hatchability", "interdetermination", "thunderclap"]
-    $current_word = ""
-    player_attempt = ""
-    $player_lives = 0
-    $level_counter = 0
-    $player_score = 0
-    $current_lvl = $lvl_1
-    $hide_speed = 1.5
-    $retry = false
-    $player = nil
-    user_choice = ""
-end
-
 def next_word
     puts "Here's the next enemy..."
     display_word
@@ -372,7 +289,7 @@ end
 def level_advance
     all_lvls = [$lvl_1, $lvl_2, $lvl_3]
     if $current_lvl != all_lvls.last
-        puts "You are soooo gud - you're on to level #{$level_counter + 2}!"
+        puts "You hve defeated the first wave - prepare for wavel #{$level_counter + 2}!"
         puts "Here's a reminder of your character's stats"
         # the hp is not correct here.
         puts $player
@@ -404,6 +321,24 @@ def retry_game()
     else
         puts "Cya later..."
     end
+end
+
+def reset_vars()
+    $lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
+    # $lvl_1 = ["perimeter"]
+    $lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
+    # $lvl_2 = ["balanced", "uncertain"]
+    $lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", "literature", "retirement", "commitment", "provincial", "profession", "acceptance", "settlement", "girlfriend", "excitement", "incredible", "reputation", "prediction", "difference", "dictionary", "repetition", "helicopter", "withdrawal", "projection", "accountant", "overcharge", "substitute", "psychology", "unpleasant", "deficiency", "conclusion", "perception", "correction", "acceptable", "philosophy", "gregarious", "relinquish", "houseplant", "confidence", "reasonable", "tournament", "depression", "presidency", "background", "hypothesis", "foundation", "redundancy", "experiment", "correspond", "restaurant", "enthusiasm"]
+    # $lvl_3 = ["hatchability", "interdetermination", "thunderclap"]
+    $current_word = ""
+    player_attempt = ""
+    $level_counter = 0
+    $player_score = 0
+    $current_lvl = $lvl_1
+    $hide_speed = 1.5
+    $retry = false
+    $player = nil
+    user_choice = ""
 end
 
 # game_start

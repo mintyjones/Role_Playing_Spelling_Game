@@ -1,8 +1,8 @@
     require_relative("./player_character.rb")
 
     class WizardClass < PlayerCharacter
-        attr_reader :name, :hp
-        attr_accessor :passes
+        attr_reader :name
+        attr_accessor :passes, :hp
         def initialize(name)
             super(name, "wizard")
             @traits[:intelligence] = self.traits[:intelligence] + 4

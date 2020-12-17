@@ -1,8 +1,8 @@
 require_relative("./player_character.rb")
 
 class ThiefClass < PlayerCharacter
-    attr_reader :name, :hp
-    attr_accessor :passes
+    attr_reader :name
+    attr_accessor :passes, :hp
     def initialize(name)
         super(name, "thief")
         @traits[:dexterity] = self.traits[:dexterity] + 4
