@@ -24,7 +24,12 @@
         end
 
         def power
-            puts "Using the character power"
+            puts "Using the character SLOW TIME power!"
+            puts "Everything is in slow motion!"
+            $hide_speed *= 2
+            @traits[:intelligence] -= 4
+            @passes = determine_passes(@traits[:intelligence]) - 1
+            sleep(3)
         end
 
         def to_s

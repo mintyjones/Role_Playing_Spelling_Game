@@ -5,9 +5,10 @@ class HighScores
         score_array = []
         YAML.load_stream(File.read 'highscores.yml') { |doc| score_array << doc }
         score_array.sort_by!{|x|  x[:playerscore] }.reverse!
+        top_ten = score_array[0, 10]
         @table = TTY::Table.new
         @table << ["Name","High Score"]
-        score_array.each do |score|
+        top_ten.each do |score|
             @table << score.values
         end
     end

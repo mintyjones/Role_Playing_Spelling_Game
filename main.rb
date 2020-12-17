@@ -84,8 +84,7 @@ def character_check(character)
         $player = character
         pick_difficulty
     else
-        puts "Press enter to reroll character..."
-        gets
+        sleep(1)
         make_character
     end
 end
@@ -137,7 +136,6 @@ def display_word
     puts "#{$no_of_enemies-$word_count} remain to be defeated!"
     puts "You have #{$time_limit} seconds to destroy the minion:"
     begin
-    #run_special
     start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     player_attempt = Timeout::timeout($time_limit) {
         printf "Input: "
@@ -172,6 +170,7 @@ def match_check(enteredWord, time)
         if $player.passes > 0
             $word_count += 1
             puts "You have used a pass power!!"
+            $used_passes +=
             $player.passes -= 1
             puts "You have #{$player.passes} left!"
             sleep(2)
@@ -214,7 +213,7 @@ def update_score(time)
 end
 
 def next_level_check
-    if ($current_lvl == $lvl_1 && $word_count > 9) || ($current_lvl == $lvl_2 && $word_count > 14) || ($current_lvl == $lvl_3 && $word_count > 19)
+    if ($current_lvl == $lvl_1 && $word_count > 2) || ($current_lvl == $lvl_2 && $word_count > 2) || ($current_lvl == $lvl_3 && $word_count > 19)
         $word_count = 0
         system "clear"
         level_advance
@@ -307,9 +306,10 @@ def level_advance
         if $hide_speed >= 0.4
             $hide_speed -= 0.2
         end
-        if $time_limit >= 2
+        if $time_limit >= 3
             $time_limit -= 2
         end
+        puts "time limit is: #{$time_limit}"
         continue()
         system "clear"
         next_word()
@@ -321,10 +321,9 @@ end
 
 def retry_game()
     user_retry = $prompt.select("Would you like to try again?", ["Yes", "No"])
-    if user_retry == "y"
+    if user_retry == "Yes"
         reset_vars
-        $retry = true
-        display_menu
+        start_app
     else
         puts "Come back to fight another day..."
     end
@@ -339,12 +338,14 @@ def reset_vars()
     # $lvl_3 = ["hatchability", "interdetermination", "thunderclap"]
     $current_word = ""
     player_attempt = ""
-    $level_counter = 0
     $player_score = 0
+    $level_counter = 0
+    $word_count = 0
     $current_lvl = $lvl_1
     $hide_speed = 1.5
-    $retry = false
+    $time_limit = 7
     $no_of_enemies = 10
+    $used_passes = 0
     $prompt = TTY::Prompt.new
     $player = nil
 end
