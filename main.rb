@@ -18,27 +18,26 @@ require "yaml"
 require 'timeout'
 
 # all level word arrays
-$lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
+# $lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
 
-$lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
+# $lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
 
-$lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", "literature", "retirement", "commitment", "provincial", "profession", "acceptance", "settlement", "girlfriend", "excitement", "incredible", "reputation", "prediction", "difference", "dictionary", "repetition", "helicopter", "withdrawal", "projection", "accountant", "overcharge", "substitute", "psychology", "unpleasant", "deficiency", "conclusion", "perception", "correction", "acceptable", "philosophy", "gregarious", "relinquish", "houseplant", "confidence", "reasonable", "tournament", "depression", "presidency", "background", "hypothesis", "foundation", "redundancy", "experiment", "correspond", "restaurant", "enthusiasm"]
+# $lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", "literature", "retirement", "commitment", "provincial", "profession", "acceptance", "settlement", "girlfriend", "excitement", "incredible", "reputation", "prediction", "difference", "dictionary", "repetition", "helicopter", "withdrawal", "projection", "accountant", "overcharge", "substitute", "psychology", "unpleasant", "deficiency", "conclusion", "perception", "correction", "acceptable", "philosophy", "gregarious", "relinquish", "houseplant", "confidence", "reasonable", "tournament", "depression", "presidency", "background", "hypothesis", "foundation", "redundancy", "experiment", "correspond", "restaurant", "enthusiasm"]
 
 
 
-$current_word = ""
-player_attempt = ""
-$player_score = 0
-$level_counter = 0
-$word_count = 0
-$current_lvl = $lvl_1
-$hide_speed = 1.5
-$time_limit = 7
-$retry = false
-$no_of_enemies = 10
-# SHOULD I USE THIS AS A GLOBAL VARIABLE?
-$prompt = TTY::Prompt.new
-$player = nil
+# $current_word = ""
+# player_attempt = ""
+# $player_score = 0
+# $level_counter = 0
+# $word_count = 0
+# $current_lvl = $lvl_1
+# $hide_speed = 1.5
+# $time_limit = 7
+# $retry = false
+# $no_of_enemies = 10
+# $prompt = TTY::Prompt.new
+# $player = nil
 
 def display_menu
     font_sml = TTY::Font.new(:straight)
@@ -53,6 +52,9 @@ end
 
 def make_character
     system "clear"
+    font_big = TTY::Font.new(:doom)
+    font_col = Pastel.new
+    puts font_col.red(font_big.write("Character Creation"))
     puts "Create a new character!"
     user_character = $prompt.select("What character class would you like to choose?", ["Barbarian", "Wizard", "Thief", "Random"])
     case user_character
@@ -342,32 +344,34 @@ def reset_vars()
     $current_lvl = $lvl_1
     $hide_speed = 1.5
     $retry = false
+    $no_of_enemies = 10
+    $prompt = TTY::Prompt.new
     $player = nil
-    user_choice = ""
 end
 
 # game_start
-
-user_choice = ""
-while user_choice != "Exit Game"
-    puts "You should be in the main menu right now"
-    user_choice = display_menu
-    case user_choice
-    when "Start New Game"
-        make_character
-        break
-    when "View Instructions"
-        puts "sds"
-    when "View Leaderboard"
-        puts HighScores.new
-        puts "Press Enter to return to main menu."
-        gets
-        display_menu
-        next
-    else
-        puts "Come back again soon....if you DARE!!!"
-        next
+def start_app
+    reset_vars
+    user_choice = ""
+    while user_choice != "Exit Game"
+        user_choice = display_menu
+        case user_choice
+        when "Start New Game"
+            make_character
+            break
+        when "View Instructions"
+            puts "sds"
+        when "View Leaderboard"
+            puts HighScores.new
+            puts "Press Enter to return to main menu."
+            gets
+            start_app
+            next
+        else
+            puts "Come back again soon....if you DARE!!!"
+            next
+        end
     end
 end
 
-# puts random_character.traits
+start_app
