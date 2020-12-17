@@ -25,7 +25,8 @@ class BarbarianClass < PlayerCharacter
     end
 
     def power
-        puts "Using the character power"
+        puts "Using the character BIG STRIKE power!"
+        puts "You have destroyed half of this wave!"
         case $current_lvl
         when $lvl_1
             $word_count += 5
@@ -35,6 +36,7 @@ class BarbarianClass < PlayerCharacter
             $word_count += 10
         end
         @hp -= 2
+        sleep(3)
     end
     
     def to_s

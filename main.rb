@@ -35,6 +35,7 @@ $current_lvl = $lvl_1
 $hide_speed = 1.5
 $time_limit = 7
 $retry = false
+$no_of_enemies = 10
 # SHOULD I USE THIS AS A GLOBAL VARIABLE?
 $prompt = TTY::Prompt.new
 $player = nil
@@ -51,6 +52,7 @@ def display_menu
 end
 
 def make_character
+    system "clear"
     puts "Create a new character!"
     user_character = $prompt.select("What character class would you like to choose?", ["Barbarian", "Wizard", "Thief", "Random"])
     case user_character
@@ -75,9 +77,8 @@ end
 def character_check(character)
     system "clear"
     puts character
-    puts "Are you happy with this character? (y/n)"
-    user_reply = gets.chomp
-    if user_reply == "y"
+    user_happy = $prompt.select("Are you happy with this character?", ["Yes", "No"])
+    if user_happy == "Yes"
         $player = character
         pick_difficulty
     else
@@ -109,16 +110,15 @@ def pre_game
 end
 
 def pick_difficulty
-    print "Pick a difficulty level (easy/med/hard): "
-    diff_choice = gets.chomp
-    case diff_choice
-        when "easy"
+    user_diff = $prompt.select("Pick a difficulty level", ["Easy", "Medium", "Hard"])
+    case user_diff
+        when "Easy"
             $hide_speed = 3  
             $time_limit = 7
-        when "med"
+        when "Medium"
             $hide_speed = 2
             $time_limit = 6
-        when "hard"
+        when "Hard"
             $hide_speed = 1.5
             $time_limit = 5
     end 
@@ -132,6 +132,7 @@ def display_word
     # time_limit
     sleep($hide_speed)
     system "clear"
+    puts "#{$no_of_enemies-$word_count} remain to be defeated!"
     puts "You have #{$time_limit} seconds to destroy the minion:"
     begin
     #run_special
@@ -175,21 +176,26 @@ def match_check(enteredWord, time)
             next_level_check 
         else
             puts "You have no passes left!"
+            puts "You have lost a life."
             $player.hp -= 1
             # check if alive or dead
             game_over_check
         end
     elsif enteredWord == "1"
         $player.power
-        game_over_check
+        if $player.hp < 1
+            game_over_check
+        else
+            next_level_check
+        end
     else
         # indicate wrong answer
         system "clear"
-        puts "Bah bah - wrong."
+        puts "Oh dear, enemy gets a hit in."
         # decrease lives by one
         $player.hp -= 1
         # check if alive or dead
-        game_over_check
+       game_over_check
     end
 end
 
@@ -239,7 +245,7 @@ def game_over_check
 end
 
 def continue
-    print "Press enter wen yoo reddy"
+    print "Press enter to face the next wave"
     gets
 end
 
@@ -289,11 +295,12 @@ end
 def level_advance
     all_lvls = [$lvl_1, $lvl_2, $lvl_3]
     if $current_lvl != all_lvls.last
-        puts "You hve defeated the first wave - prepare for wavel #{$level_counter + 2}!"
+        puts "You hve defeated the first wave - prepare for wave #{$level_counter + 2}!"
         puts "Here's a reminder of your character's stats"
         # the hp is not correct here.
         puts $player
         $level_counter += 1
+        $no_of_enemies += 5
         $current_lvl = all_lvls[$level_counter]
         if $hide_speed >= 0.4
             $hide_speed -= 0.2
@@ -311,15 +318,13 @@ def level_advance
 end
 
 def retry_game()
-    print "Would you like to try again? (y/n) "
-    go_again = gets.chomp
-    if go_again == "y"
+    user_retry = $prompt.select("Would you like to try again?", ["Yes", "No"])
+    if user_retry == "y"
         reset_vars
-
         $retry = true
         display_menu
     else
-        puts "Cya later..."
+        puts "Come back to fight another day..."
     end
 end
 
@@ -345,6 +350,7 @@ end
 
 user_choice = ""
 while user_choice != "Exit Game"
+    puts "You should be in the main menu right now"
     user_choice = display_menu
     case user_choice
     when "Start New Game"
