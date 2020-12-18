@@ -18,23 +18,12 @@ class BarbarianClass < PlayerCharacter
         @hp = determine_hp(@traits[:endurance])
         @passes = determine_passes(@traits[:intelligence])
         @changes = determine_changes(@traits[:dexterity])
-        # puts "Traits within BarbarianClass #{@traits}"
-        # puts "Character HP #{@hp}"
-        # puts "Character passes #{@passes}"
-        # puts "Character changes #{@changes}"
     end
 
     def power
-        puts "Using the character BIG STRIKE power!"
+        puts "#{name} used the character BIG STRIKE power!"
         puts "You have destroyed half of this wave!"
-        case $current_lvl
-        when $lvl_1
-            $word_count += 5
-        when $lvl_2
-            $word_count += 7
-        when $lvl_3
-            $word_count += 10
-        end
+        $word_count += $no_of_enemies/2
         @hp -= 2
         sleep(3)
     end
