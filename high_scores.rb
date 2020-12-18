@@ -14,6 +14,6 @@ class HighScores
     end
 
     def to_s
-        @table.render(:ascii)
+        @table.render(:unicode)
     end
 end

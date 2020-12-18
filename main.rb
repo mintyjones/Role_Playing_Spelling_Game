@@ -3,6 +3,7 @@ require_relative("./barbarian_class.rb")
 require_relative("./wizard_class.rb")
 require_relative("./thief_class.rb")
 require_relative("./high_scores.rb")
+require_relative("./instructions.rb")
 require "tty-table"
 require "time"
 require "colorize"
@@ -13,18 +14,29 @@ require "yaml"
 require 'timeout'
 
 
-
+# Display the starting game menu and check for command line arguments
 def display_menu
     font_sml = TTY::Font.new(:straight)
     font_big = TTY::Font.new(:doom)
     font_col = Pastel.new
     system "clear"
-    puts font_sml.write("Welcome to...")
+    if ARGV.length == 1
+        puts font_sml.write("#{ARGV[0]}, Welcome to...") 
+        ARGV.clear
+    elsif ARGV.length > 1 && ARGV[1] == "-s"
+        puts font_sml.write("#{ARGV[0]}, Welcome to...") 
+        ARGV.clear
+        random_character
+        pre-game
+    else
+        puts font_sml.write("Welcome to...")
+    end
     puts font_col.red(font_big.write("RPSG"))
     return $prompt.select("What would you like to do?",
         ["Start New Game", "View Instructions", "View Leaderboard", "Exit Game"])
 end
 
+# Create character and set the character class and name
 def make_character
     system "clear"
     font_big = TTY::Font.new(:doom)
@@ -51,6 +63,7 @@ def make_character
     character_check(new_player)
 end
 
+# prompt to user to check if happy with this character
 def character_check(character)
     system "clear"
     puts character
@@ -64,6 +77,7 @@ def character_check(character)
     end
 end
 
+# Creates a random class of character with a set name
 def random_character
     rand_char_num = rand(1..3)
     case rand_char_num
@@ -77,6 +91,7 @@ def random_character
     character_check(new_player)
 end
 
+# Gives a puase to the player before they start the game
 def pre_game
     puts 
     puts "Get ready for the Horde - Level 1...."
@@ -85,6 +100,7 @@ def pre_game
     display_word
 end
 
+#sets the difficulty of the game
 def pick_difficulty
     user_diff = $prompt.select("Pick a difficulty level", ["Easy", "Medium", "Hard"])
     case user_diff
@@ -101,15 +117,36 @@ def pick_difficulty
     pre_game
 end
 
+# displays the current level above the game screens
+def wave_display
+    font_big = TTY::Font.new(:doom)
+    font_col = Pastel.new
+    case $current_lvl
+    when $lvl_1
+        puts font_col.red(font_big.write("WAVE 1"))
+    when $lvl_2
+        puts font_col.red(font_big.write("WAVE 2"))
+    when $lvl_3
+        puts font_col.red(font_big.write("WAVE 3"))
+    end
+end
+
+# displays the current word on the screen for a specified amount of time
 def display_word
     system "clear"
+    wave_display
     puts "Watch carefully and remember..."
     puts " " + fetch_current_word + " \r"
     # time_limit
     sleep($hide_speed)
+    player_input_word
+end
+
+def player_input_word
     system "clear"
-    puts "#{$no_of_enemies-$word_count} remain to be defeated!"
-    puts "You have #{$time_limit} seconds to destroy the minion:"
+    wave_display
+    puts "#{$no_of_enemies-$word_count} remain to be defeated!".black.on_green
+    puts "You have #{$time_limit} seconds to destroy the minion:".red.blink
     begin
     start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     player_attempt = Timeout::timeout($time_limit) {
@@ -145,7 +182,7 @@ def match_check(enteredWord, time)
         if $player.passes > 0
             $word_count += 1
             puts "You have used a pass power!!"
-            $used_passes +=
+            $used_passes += 1
             $player.passes -= 1
             puts "You have #{$player.passes} left!"
             sleep(2)
@@ -226,26 +263,11 @@ def continue
 end
 
 def try_again
+    wave_display
     puts "Here's the word again..."
 	puts $current_word.colorize(:color => :black, :background => :green) + "\r"
     sleep($hide_speed)
-    system "clear"
-    puts "You have #{$time_limit} seconds to destroy the minion:"
-    
-    x = $time_limit
-    begin
-    start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    player_attempt = Timeout::timeout($time_limit) {
-        printf "Input: "
-        gets.chomp
-    }
-    end_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
-    time_passed = end_time - start_time
-    # puts "Got: #{status}"
-    rescue Timeout::Error
-    puts "\nInput timed out after #{x} seconds"
-    end
-    match_check(player_attempt, time_passed)
+    player_input_word
 end
 
 def write_to_file(high_score)
@@ -284,7 +306,6 @@ def level_advance
         if $time_limit >= 3
             $time_limit -= 2
         end
-        puts "time limit is: #{$time_limit}"
         continue()
         system "clear"
         next_word()
@@ -334,16 +355,20 @@ def start_app
             make_character
             break
         when "View Instructions"
-            puts "sds"
+            puts Instructions.new
+            puts "Press Enter to return to main menu."
+            gets
+            start_app
+            break
         when "View Leaderboard"
             puts HighScores.new
             puts "Press Enter to return to main menu."
             gets
             start_app
-            next
+            break
         else
             puts "Come back again soon....if you DARE!!!"
-            next
+            break
         end
     end
 end
