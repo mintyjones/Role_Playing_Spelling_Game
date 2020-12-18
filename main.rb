@@ -1,4 +1,5 @@
 # Spelling Game
+# all required files and gems
 require_relative("./barbarian_class.rb")
 require_relative("./wizard_class.rb")
 require_relative("./thief_class.rb")
@@ -10,7 +11,6 @@ require "colorize"
 require "tty-prompt"
 require "tty-font"
 require "yaml"
-
 require 'timeout'
 
 
@@ -20,6 +20,7 @@ def display_menu
     font_big = TTY::Font.new(:doom)
     font_col = Pastel.new
     system "clear"
+    # if statement to detect if arguments given in command line
     if ARGV.length == 1
         puts font_sml.write("#{ARGV[0]}, Welcome to...") 
         ARGV.clear
@@ -32,6 +33,7 @@ def display_menu
         puts font_sml.write("Welcome to...")
     end
     puts font_col.red(font_big.write("RPSG"))
+    # displays game menu to player
     return $prompt.select("What would you like to do?",
         ["Start New Game", "View Instructions", "View Leaderboard", "Exit Game"])
 end
@@ -142,6 +144,7 @@ def display_word
     player_input_word
 end
 
+# allows the player to input their word with a time limit imposed
 def player_input_word
     system "clear"
     wave_display
@@ -162,11 +165,13 @@ def player_input_word
     match_check(player_attempt, time_passed)
 end
 
+# randomly selects a word from the currnet level's word pool
 def fetch_current_word()
     $current_word = $current_lvl.fetch(rand($current_lvl.length-1))
     $current_word.colorize(:color => :black, :background => :green)
 end
 
+# checks if word entered is correct, or if the player has used a special ability
 def match_check(enteredWord, time)
     if enteredWord == $current_word
         $word_count += 1
@@ -212,6 +217,7 @@ def match_check(enteredWord, time)
     end
 end
 
+# updates the player's score according to how fast they entered the word
 # need to look if I can make these ranges more dynamic regarding diff level
 def update_score(time)
     case time
@@ -224,6 +230,7 @@ def update_score(time)
     end
 end
 
+# checks how many words the player has entered correctly and decides if we move onto the next level
 def next_level_check
     if ($current_lvl == $lvl_1 && $word_count > 9) || ($current_lvl == $lvl_2 && $word_count > 14) || ($current_lvl == $lvl_3 && $word_count > 19)
         $word_count = 0
@@ -236,7 +243,8 @@ def next_level_check
     end
 end
 
-
+# runs when a player loses a life checks if they are out of lives and if the game is over
+# if they have lives left, they get to retry the current word
 def game_over_check
     if $player.hp > 0
         # allow retry  
@@ -257,11 +265,13 @@ def game_over_check
     end
 end
 
+# user prompt to progress to the next wave
 def continue
     print "Press enter to face the next wave"
     gets
 end
 
+# gives the player anopportunity to try the current word again
 def try_again
     wave_display
     puts "Here's the word again..."
@@ -270,6 +280,7 @@ def try_again
     player_input_word
 end
 
+#wsrites the player's score to locally scored YAML file
 def write_to_file(high_score)
     # Here is a scenario where we try to search for a file to open it and write to it
     #  this begin rescue block ensures that if there is an error while during the file open / write operation in the BEGIN block, it is handled in the rescue block
@@ -285,11 +296,13 @@ def write_to_file(high_score)
     end
 end
 
+# Screen message to who next word is being displayed
 def next_word
     puts "Here's the next enemy..."
     display_word
 end
 
+# moves the game to the next level state increasing the amount of enemies, and decreasing hide speeds and time limits
 def level_advance
     all_lvls = [$lvl_1, $lvl_2, $lvl_3]
     if $current_lvl != all_lvls.last
@@ -315,6 +328,7 @@ def level_advance
     end
 end
 
+# prompt to ask the user if they want to try the game again
 def retry_game()
     user_retry = $prompt.select("Would you like to try again?", ["Yes", "No"])
     if user_retry == "Yes"
@@ -325,6 +339,7 @@ def retry_game()
     end
 end
 
+# this resets all the varisbale in the event that the player restarts the game
 def reset_vars()
     $lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
     $lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
