@@ -46,18 +46,19 @@ def make_character
     puts font_col.red(font_big.write("Character Creation"))
     puts "Create a new character!"
     user_character = $prompt.select("What character class would you like to choose?", ["Barbarian", "Wizard", "Thief", "Random"])
+    puts "Enter character name: "
+    char_name = gets.chomp
+    # Error check if player doesn't enter any name
+    while char_name == ""
+        puts "Please enter a name:"
+        char_name = gets.chomp
+    end
     case user_character
     when "Barbarian"
-        puts "Enter character name: "
-        char_name = gets.chomp
         new_player = BarbarianClass.new(char_name)
     when "Wizard"
-        puts "Enter character name: "
-        char_name = gets.chomp
         new_player = WizardClass.new(char_name)
     when "Thief"
-        puts "Enter character name: "
-        char_name = gets.chomp
         new_player = ThiefClass.new(char_name)
     else
         random_character
@@ -106,15 +107,15 @@ end
 def pick_difficulty
     user_diff = $prompt.select("Pick a difficulty level", ["Easy", "Medium", "Hard"])
     case user_diff
-        when "Easy"
-            $hide_speed = 3  
-            $time_limit = 7
-        when "Medium"
-            $hide_speed = 2
-            $time_limit = 6
-        when "Hard"
-            $hide_speed = 1.5
-            $time_limit = 5
+    when "Easy"
+        $hide_speed = 3  
+        $time_limit = 7
+    when "Medium"
+        $hide_speed = 2
+        $time_limit = 6
+    when "Hard"
+        $hide_speed = 1.5
+        $time_limit = 5
     end 
     pre_game
 end
@@ -166,7 +167,7 @@ def player_input_word
 end
 
 # randomly selects a word from the currnet level's word pool
-def fetch_current_word()
+def fetch_current_word
     $current_word = $current_lvl.fetch(rand($current_lvl.length-1))
     $current_word.colorize(:color => :black, :background => :green)
 end
@@ -200,6 +201,11 @@ def match_check(enteredWord, time)
             game_over_check
         end
     elsif enteredWord == "1"
+        # $player.class
+        if $player.class == ThiefClass
+            thief_guess = $player.power
+            match_check(thief_guess, time)
+        end
         $player.power
         if $player.hp < 1
             game_over_check
@@ -282,19 +288,10 @@ end
 
 #wsrites the player's score to locally scored YAML file
 def write_to_file(high_score)
-    # Here is a scenario where we try to search for a file to open it and write to it
-    #  this begin rescue block ensures that if there is an error while during the file open / write operation in the BEGIN block, it is handled in the rescue block
-    begin
-        # This is a behaviour that mimicks storing data to a DB - for now its just a file that we are dealing with
-        file = File.open("highscores.yml","a+"){ |file| file.write(high_score.to_yaml)}
-        if file
-            # puts "High score saved successfully to file"
-        end
-    rescue
-        puts "File not found"
-        puts "Could not save high score to the file"
-    end
+    file = File.open("highscores.yml","a+"){ |file| file.write(high_score.to_yaml)}
 end
+
+# def validate_scores
 
 # Screen message to who next word is being displayed
 def next_word
@@ -329,7 +326,7 @@ def level_advance
 end
 
 # prompt to ask the user if they want to try the game again
-def retry_game()
+def retry_game
     user_retry = $prompt.select("Would you like to try again?", ["Yes", "No"])
     if user_retry == "Yes"
         reset_vars
@@ -340,7 +337,7 @@ def retry_game()
 end
 
 # this resets all the varisbale in the event that the player restarts the game
-def reset_vars()
+def reset_vars
     $lvl_1 = ["foodless", "attained", "auspices", "thriving", "charters", "spiffier", "styrenes", "singlets", "timbrels", "hidalgos", "tentacle", "sufficed", "deaconed", "peacocks", "beshamed", "tapeless", "goldeyes", "gavelled", "pinkness", "nonfatal", "citrated", "outscorn", "warpwise", "adjoined", "stifling", "oosperms", "innately", "prunable", "imploded", "overstir", "opposite", "automata", "whomever", "skewbald", "premolds", "goombays", "freakily", "deadwood", "savaging", "hereaway", "wabblers", "hazarded", "bowering", "pastrami", "seraglio", "unquotes", "cymosely", "sunbaked", "petering", "eeriness"]
     $lvl_2 = ["criticism", "incapable", "frequency", "strategic", "agreement", "direction", "modernize", "leftovers", "candidate", "secretary", "operation", "reception", "craftsman", "colleague", "conductor", "intensify", "dimension", "permanent", "disappear", "radiation", "objective", "education", "paragraph", "ambiguous", "discovery", "butterfly", "authorise", "neighbour", "coalition", "overwhelm", "exception", "represent", "hilarious", "recommend", "housewife", "reconcile", "committee", "attention", "earthflax", "available", "underline", "extension", "favorable", "encourage", "community", "effective", "depressed", "admission", "adventure", "talkative"]
     $lvl_3 = ["negligence", "goalkeeper", "proportion", "opposition", "articulate", "literature", "retirement", "commitment", "provincial", "profession", "acceptance", "settlement", "girlfriend", "excitement", "incredible", "reputation", "prediction", "difference", "dictionary", "repetition", "helicopter", "withdrawal", "projection", "accountant", "overcharge", "substitute", "psychology", "unpleasant", "deficiency", "conclusion", "perception", "correction", "acceptable", "philosophy", "gregarious", "relinquish", "houseplant", "confidence", "reasonable", "tournament", "depression", "presidency", "background", "hypothesis", "foundation", "redundancy", "experiment", "correspond", "restaurant", "enthusiasm"]

@@ -21,6 +21,7 @@ class ThiefClass < PlayerCharacter
         # puts "Character HP #{@hp}"
         # puts "Character passes #{@passes}"
         # puts "Character changes #{@changes}"
+        @powers = 1
     end
 
     def random_word
@@ -28,10 +29,15 @@ class ThiefClass < PlayerCharacter
     end
         
     def power
-        puts "#{name} used the character SNEAKY PEEK power!"
-        choices = [$current_word, random_word, random_word]
-        user_diff = $prompt.select("Choose the word from the list below:", choices.shuffle!)
-        
+        if @powers > 0
+            puts "#{name} used the character SNEAKY PEEK power!"
+            choices = [$current_word, random_word, random_word]
+            user_diff = $prompt.select("Choose the word from the list below:", choices.shuffle!)
+            @powers -= 1
+        else
+            puts "You've already used your power!"
+            try_again
+        end
     end
     
     def to_s
