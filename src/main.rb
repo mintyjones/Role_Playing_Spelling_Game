@@ -208,12 +208,13 @@ def match_check(enteredWord, time)
         if $player.class == ThiefClass
             thief_guess = $player.power
             match_check(thief_guess, time)
-        end
-        $player.power
-        if $player.hp < 1
-            game_over_check
         else
-            next_level_check
+            $player.power
+            if $player.hp < 1
+                game_over_check
+            else
+                next_level_check
+            end
         end
     else
         # indicate wrong answer
@@ -331,6 +332,7 @@ end
 # prompt to ask the user if they want to try the game again
 def retry_game
     user_retry = $prompt.select("Would you like to try again?", ["Yes", "No"])
+    puts user_retry
     if user_retry == "Yes"
         reset_vars
         start_app

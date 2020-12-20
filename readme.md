@@ -93,13 +93,91 @@ When entering a name, if the user doesn't enter anything, they will be repeatedl
 
 When a user attempts to look at the leaderboard when there have not yet been any scores collected, they will be told that they are the first to play the game, and that there are no scores to show. (Under the hood, this is because a highscore YAML file has not yet been created.)
 
+### TEST CASES ###
+
+I had to run tests with all character classes since each one has a different power. The thief class, in particular, how a different control flow to his power. When playing through a test with that class, I found that if I lost, and the game went to the game over state, I was presented with this error:
+
+```
+src/main.rb:213:in `match_check': undefined method `hp' for nil:NilClass (NoMethodError)
+```
+I looked at the code, as it wasn't obvious at first what the problem was, but then noticed the "if" statement I had used with the thief in the "match_check" method...
+
+```
+        if $player.class == ThiefClass
+            thief_guess = $player.power
+            match_check(thief_guess, time)
+        end
+        $player.power
+        if $player.hp < 1
+            game_over_check
+        else
+            next_level_check
+        end
+```
+I realised I had to use an if..else with the thief, as I was essentially running his power twice with the way this code was written. I adjusted the code as follows:
+
+```
+        if $player.class == ThiefClass
+            thief_guess = $player.power
+            match_check(thief_guess, time)
+        else
+            $player.power
+            if $player.hp < 1
+                game_over_check
+            else
+                next_level_check
+            end
+        end
+```
+
+The other error I was receiving was when trying to view the leaderboard if the game had never been played, as follows:
+
+```
+No such file or directory @ rb_sysopen - data/highscores.yml (Errno::ENOENT)
+```
+
+To solve this, I wrote a begin..rescue block for reading the yaml file:
+
+```
+        begin
+            # This is a behaviour that mimicks storing data to a DB - for now its just a file that we are dealing with
+            YAML.load_stream(File.read 'data/highscores.yml') { |doc| score_array << doc }
+        rescue Errno::ENOENT
+            puts "You are the first to play the game..."
+            puts "...there are no scores for a leaderboard yet - good luck on your first try!"
+        end
+```
+
+This gave the user an error message which informaed them why no scores were available.
+
 ## **CONTROL FLOW**
 
 ![UML Diagram](./docs/Terminal_app.jpeg)
 
 ## **IMPLEMENTATION PLAN**
 
-[Trello Board](https://trello.com/b/AhqZv7GU/t1a3terminalapp)
+The full development plan can be found here: [Trello Board](https://trello.com/b/AhqZv7GU/t1a3terminalapp)
+
+Character Creation feature checklist
+- Present choice menu
+- Show player the character
+- Ask player for character name
+- Run check that player has entered name
+- Write method(s) to create all character attributes
+
+Leaderboard feature checklist
+- Add the option to view leaderboard to the main menu
+- Write method that saves high scores to file
+- write method that will present the leaderboard
+- Limit the leaderboard to only show 10 scores
+- Ensure that if yaml file isn't present that correct error message is shown
+
+Character traits and abilities feature
+- Inherit from the parent PlayerCharacter class
+- test methods by running app
+- write method for specific character powers
+- write instructions for player on each character type abilities
+- double check characters traits are capped and floored upon creation
 
 ## **HELP AND INSTALLATION**
 

@@ -36,8 +36,11 @@ class ThiefClass < PlayerCharacter
             @powers -= 1
         else
             puts "You've already used your power!"
+            sleep(2)
+            system "clear"
             try_again
         end
+        return user_diff
     end
     
     def to_s
