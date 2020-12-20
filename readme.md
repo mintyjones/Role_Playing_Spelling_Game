@@ -89,7 +89,26 @@ Apart from choosing the character name, all choices are given to the user by men
 
 The special power features are used by typing a specific numerical character or by only pressing enter. The user is not likely to do this by mistake, especially since none of the words contain any numbers. 
 
-Whne entering a name, if the user doesn't enter anything, they will be repeatedly asked to enter a valid name, until some string has been entered.
+When entering a name, if the user doesn't enter anything, they will be repeatedly asked to enter a valid name, until some string has been entered.
 
-When a user attempts to look at the leaderboard when there have not yet been anyscores collected, they wiull be told that they are the forst to play the game, and that there are no scores to show. (Under the hood, this is because a highscore YAML file has not yet been created.)
+When a user attempts to look at the leaderboard when there have not yet been any scores collected, they will be told that they are the first to play the game, and that there are no scores to show. (Under the hood, this is because a highscore YAML file has not yet been created.)
 
+## **CONTROL FLOW**
+
+![UML Diagram](./docs/Terminal_app.jpeg)
+
+## **IMPLEMENTATION PLAN**
+
+[Trello Board](https://trello.com/b/AhqZv7GU/t1a3terminalapp)
+
+## **HELP AND INSTALLATION**
+
+To run this program you will need to ensure that you have ruby installed (see [Installing Ruby](https://www.ruby-lang.org/en/documentation/installation/#rubyinstaller) for your particular platform)
+
+This application is running on Ruby version 2.7.2
+
+This application was developed on the WSL:Ubuntu 18.04 platform
+
+Clone this files from this Git Repository by running this command on the command line:
+
+'
