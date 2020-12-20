@@ -33,6 +33,7 @@ def display_menu
         puts font_sml.write("Welcome to...")
     end
     puts font_col.red(font_big.write("RPSG"))
+    puts "If you haven't played before, it is advisable to read the instructions."
     # displays game menu to player
     return $prompt.select("What would you like to do?",
         ["Start New Game", "View Instructions", "View Leaderboard", "Exit Game"])

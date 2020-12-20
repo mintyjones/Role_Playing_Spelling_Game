@@ -20,13 +20,13 @@ If you are out of passes and you perform a pass, you will lose a life instead, s
 Character classes have specific powers - these are activated by inputting a number "1" and pressing enter:
 
 BARBARIAN - "BIG STRIKE"
-You can clear half of the remaining wave and sacrfice 2 health points.
+You can clear half of the remaining wave and sacrifice 2 health points.
 
 WIZARD - "SLOW TIME"
 Double the time that the words appear on the screen, but sacrifice 5 intelligence points
 
-THIEF - "BE SNEAKY"
-This is still to be implemented
+THIEF - "SNEAKY PEEK"
+Instead of having to type a word attempt, this power will display 3 words to you in a slectable prompt and you can choose the correct one.
             
         )
     end
