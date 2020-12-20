@@ -5,7 +5,7 @@ class HighScores
         score_array = []
         begin
             # This is a behaviour that mimicks storing data to a DB - for now its just a file that we are dealing with
-            YAML.load_stream(File.read 'highscores.yml') { |doc| score_array << doc }
+            YAML.load_stream(File.read 'data/highscores.yml') { |doc| score_array << doc }
         rescue Errno::ENOENT
             puts "You are the first to play the game..."
             puts "...there are no scores for a leaderboard yet - good luck on your first try!"

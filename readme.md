@@ -109,6 +109,19 @@ This application is running on Ruby version 2.7.2
 
 This application was developed on the WSL:Ubuntu 18.04 platform
 
-Clone this files from this Git Repository by running this command on the command line:
+Clone the files from this Git Repository using SSH by running this command on the command line:
 
-'
+`git@github.com:mintyjones/T1A3_Terminal_App.git`
+
+Make sure you are in the root directory fot the project, and run the following command:
+
+`./script.sh`
+
+You can add the following two arguments to this command to 
+
+1. Personlaise the experience
+2. Byoass the main menu and start a randomised game straight away
+
+For example:
+
+`./script.sh Gordon -s`

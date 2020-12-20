@@ -33,7 +33,7 @@ def display_menu
         puts font_sml.write("Welcome to...")
     end
     puts font_col.red(font_big.write("RPSG"))
-    puts "If you haven't played before, it is advisable to read the instructions.asdasd"
+    puts "If you haven't played before, it is advisable to read the instructions."
     # displays game menu to player
     return $prompt.select("What would you like to do?",
         ["Start New Game", "View Instructions", "View Leaderboard", "Exit Game"])
@@ -291,7 +291,7 @@ end
 
 #wsrites the player's score to locally scored YAML file
 def write_to_file(high_score)
-    file = File.open("highscores.yml","a+"){ |file| file.write(high_score.to_yaml)}
+    file = File.open("data/highscores.yml","a+"){ |file| file.write(high_score.to_yaml)}
 end
 
 # def validate_scores
