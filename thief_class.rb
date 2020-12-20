@@ -23,8 +23,15 @@ class ThiefClass < PlayerCharacter
         # puts "Character changes #{@changes}"
     end
 
+    def random_word
+        random_word = $current_lvl.fetch(rand($current_lvl.length-1))
+    end
+        
     def power
-        puts "Using the character power"
+        puts "#{name} used the character SNEAKY PEEK power!"
+        choices = [$current_word, random_word, random_word]
+        user_diff = $prompt.select("Choose the word from the list below:", choices.shuffle!)
+        
     end
     
     def to_s
