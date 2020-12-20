@@ -33,7 +33,7 @@ def display_menu
         puts font_sml.write("Welcome to...")
     end
     puts font_col.red(font_big.write("RPSG"))
-    puts "If you haven't played before, it is advisable to read the instructions."
+    puts "If you haven't played before, it is advisable to read the instructions.asdasd"
     # displays game menu to player
     return $prompt.select("What would you like to do?",
         ["Start New Game", "View Instructions", "View Leaderboard", "Exit Game"])
@@ -47,8 +47,10 @@ def make_character
     puts font_col.red(font_big.write("Character Creation"))
     puts "Create a new character!"
     user_character = $prompt.select("What character class would you like to choose?", ["Barbarian", "Wizard", "Thief", "Random"])
-    puts "Enter character name: "
-    char_name = gets.chomp
+    if user_character != "Random"
+        puts "Enter character name: "
+        char_name = gets.chomp
+    end
     # Error check if player doesn't enter any name
     while char_name == ""
         puts "Please enter a name:"

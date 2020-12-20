@@ -4,4 +4,4 @@ gem install bundler
 
 bundle install
 
-ruby main.rb $1
+ruby main.rb $1 $2

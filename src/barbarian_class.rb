@@ -17,7 +17,7 @@ class BarbarianClass < PlayerCharacter
         end
         @hp = determine_hp(@traits[:endurance])
         @passes = determine_passes(@traits[:intelligence])
-        @changes = determine_changes(@traits[:dexterity])
+        # @changes = determine_changes(@traits[:dexterity])
     end
 
     def power
